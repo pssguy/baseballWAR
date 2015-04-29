@@ -1,31 +1,19 @@
 
-# This is the user-interface definition of a Shiny web application.
-# You can find out more about building applications with Shiny here:
-#
-# http://shiny.rstudio.com
-#
-
-library(shiny)
-
 shinyUI(fluidPage(
 
-  # Application title
-  titlePanel("WAR"),
 
-#   # Sidebar with a slider input for number of bins
-#   sidebarLayout(
-#     sidebarPanel(
-#       sliderInput("bins",
-#                   "Number of bins:",
-#                   min = 1,
-#                   max = 50,
-#                   value = 30)
-#     ),
+  titlePanel("Cumulative WAR by Age"),
 
-    # Show a plot of the generated distribution
+
     mainPanel(
-      DT::dataTableOutput('career'),
-      ggvisOutput("plot")
+      inputPanel(
+        selectInput("team","Select team. Choose Players to display their cumulative WAR by Age",teamChoice)
+      ),
+      fluidRow(
+        column(6,DT::dataTableOutput('career')),
+               column(6, ggvisOutput("plot"))
+        )
+      
     )
- # )
+
 ))

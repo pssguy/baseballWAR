@@ -15,10 +15,10 @@ library(DT)
 teamYears <-read_html("http://www.baseball-reference.com/leagues/MLB/2015.shtml")
 teamId <-html_nodes(teamYears, "#teams_standard_batting tbody td:nth-child(1)") %>%
   html_text()
-
+tms <- length(teamId)-1  # -1 removes the leagueav
 # i <- 29
-#for (i in 1:length(teamId)-1) { # -1 removes the leagueav
-  for (i in 18:30) {
+for (i in 1:tms) { 
+ # for (i in 1:1) {
   print(i)
 
   u <-paste0("http://www.baseball-reference.com/teams/",teamId[i],"/2015-roster.shtml")
@@ -48,13 +48,21 @@ teamId <-html_nodes(teamYears, "#teams_standard_batting tbody td:nth-child(1)") 
   links <-html_nodes(page, "#appearances a") %>%
     html_attr("href") 
   
-  df<-current %>% 
-    left_join(active)
-  df$link <- links
+  playerIDs <- character()
+  # prob should do as an apply
+  for (k in 1:length(links)) {
+  playerIDs[k] <- str_match(links[k],"/players/[a-z]/(.+).shtml")[1,2]
+  }
   
-  # j <- 3
+  df<-current %>% 
+    left_join(active) # currently joins by name, playeriD might be better
+  df$link <- links
+  df$playerID <- playerIDs
+  
+  # j <- 5
   for (j in 1:nrow(df)) {
     print(j)
+  
     playerUrl <- paste0("http://www.baseball-reference.com",df$link[j])
     
     
@@ -158,10 +166,20 @@ teamId <-html_nodes(teamYears, "#teams_standard_batting tbody td:nth-child(1)") 
       
       batting$cumWAR <-cumsum(batting$WAR)
       
-      batting <- data.frame(batting)
+      batting <- data.frame(batting) # sometimes is not same length as pitching eg prior to interlock
+      # and cannot do inner_join
       # zero as done althogh cumulatively is +0.2 in baseballl ref
       
     }
+    
+    # cater for situation where pitching and batting have not each been done in final year
+    if (max(batting$Year)>max(pitching$Year)) {
+      newRow <- data.frame(Year=max(batting$Year),Age=max(batting$Age),WAR=0,cumWAR=tail(pitching,1)$cumWAR)
+      pitching <- rbind(pitching,newRow)
+    } else if (max(batting$Year)<max(pitching$Year)) {
+      newRow <- data.frame(Year=max(pitching$Year),Age=max(pitching$Age),WAR=0,cumWAR=tail(batting,1)$cumWAR)
+      batting <- rbind(batting,newRow)     
+          }
     
   #  print(glimpse(batting))
   #  print(glimpse(pitching))
@@ -190,6 +208,7 @@ teamId <-html_nodes(teamYears, "#teams_standard_batting tbody td:nth-child(1)") 
     value$Salary <- df$Salary[j] # thi will just be final salary at moment
     value$Category <- df$Category[j]
     value$Active <- df$active[j]
+    value$PlayerID <- df$playerID[j]
     
     print(value)
     
@@ -200,16 +219,17 @@ teamId <-html_nodes(teamYears, "#teams_standard_batting tbody td:nth-child(1)") 
     }
     
   }
+ # j <- NULL # NB hack
   teamValues$teamID <- teamId[i]
   
-  if (i==18) { ##NB need to change
+  if (i==1) { ##NB may need to change if not 1
     allTeamValues <- teamValues 
   }  else {
     allTeamValues= rbind(allTeamValues,teamValues) 
   }
 } 
   
-write_csv(allTeamValues,"war2015Ver4.csv")
+write_csv(allTeamValues,"war2015latest.csv")
 b <- print(Sys.time())
 
 
