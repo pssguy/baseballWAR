@@ -16,7 +16,7 @@ teamYears <-read_html("http://www.baseball-reference.com/leagues/MLB/2015.shtml"
 teamId <-html_nodes(teamYears, "#teams_standard_batting tbody td:nth-child(1)") %>%
   html_text()
 tms <- length(teamId)-1  # -1 removes the leagueav
-# i <- 29
+# i <- 1
 for (i in 1:tms) { 
  # for (i in 1:1) {
   print(i)
@@ -59,7 +59,7 @@ for (i in 1:tms) {
   df$link <- links
   df$playerID <- playerIDs
   
-  # j <- 5
+  # j <- 1
   for (j in 1:nrow(df)) {
     print(j)
   
@@ -173,6 +173,8 @@ for (i in 1:tms) {
     }
     
     # cater for situation where pitching and batting have not each been done in final year
+    print("preadjust")
+    if (!is.null(batting)&!is.null(pitching)) {
     if (max(batting$Year)>max(pitching$Year)) {
       newRow <- data.frame(Year=max(batting$Year),Age=max(batting$Age),WAR=0,cumWAR=tail(pitching,1)$cumWAR)
       pitching <- rbind(pitching,newRow)
@@ -180,7 +182,7 @@ for (i in 1:tms) {
       newRow <- data.frame(Year=max(pitching$Year),Age=max(pitching$Age),WAR=0,cumWAR=tail(batting,1)$cumWAR)
       batting <- rbind(batting,newRow)     
           }
-    
+    }
   #  print(glimpse(batting))
   #  print(glimpse(pitching))
     print("entering combo")
