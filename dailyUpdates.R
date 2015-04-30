@@ -237,28 +237,28 @@ b <- print(Sys.time())
 
 ### check c
 
-allTeamValues <- read_csv("war2015.csv") 
-allTeamValuesPt2 <- read_csv("war2015Pt2.csv") 
-allTeamValuesVer3 <- read_csv("war2015Ver3.csv") 
-unique(allTeamValuesVer3$teamID) # up to "MIN"
-## need to add playerid eg miguel castro bjs has same as buehrle - maybe need to
-## set value to zero
-
-#glimpse(allTeamValues)
-#unique(allTeamValues$teamID)
-
-library(DT)
-# allTeamValuesPt2 %>% 
-allTeamValues %>% 
-  filter(teamID=="NYM") %>% 
-  group_by(Name) %>% 
-  arrange(desc(Age)) %>% 
-  slice(1) %>% 
-  select(Name,Age,WAR=cumVal) %>% 
-  datatable(rownames = checkboxRows(.), escape = -1,
-            ,options= list(paging = FALSE, searching = FALSE,info=FALSE, order = list(list(3, 'desc')))) 
-
-
-## issues (pitchers WAR eg buehrle had 0 for 2014 so joining them does not make sense)
-## still getting some instances where star is not removed
-## if new 
+# allTeamValues <- read_csv("war2015.csv") 
+# allTeamValuesPt2 <- read_csv("war2015Pt2.csv") 
+# allTeamValuesVer3 <- read_csv("war2015Ver3.csv") 
+# unique(allTeamValuesVer3$teamID) # up to "MIN"
+# ## need to add playerid eg miguel castro bjs has same as buehrle - maybe need to
+# ## set value to zero
+# 
+# #glimpse(allTeamValues)
+# #unique(allTeamValues$teamID)
+# 
+# library(DT)
+# # allTeamValuesPt2 %>% 
+# allTeamValues %>% 
+#   filter(teamID=="NYM") %>% 
+#   group_by(Name) %>% 
+#   arrange(desc(Age)) %>% 
+#   slice(1) %>% 
+#   select(Name,Age,WAR=cumVal) %>% 
+#   datatable(rownames = checkboxRows(.), escape = -1,
+#             ,options= list(paging = FALSE, searching = FALSE,info=FALSE, order = list(list(3, 'desc')))) 
+# 
+# 
+# ## issues (pitchers WAR eg buehrle had 0 for 2014 so joining them does not make sense)
+# ## still getting some instances where star is not removed
+# ## if new 

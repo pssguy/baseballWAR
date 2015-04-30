@@ -2,7 +2,7 @@
 shinyUI(fluidPage(
 
 
-  titlePanel("Cumulative WAR by Age"),
+  titlePanel("DT interaction POC"),
 
 
     mainPanel(
